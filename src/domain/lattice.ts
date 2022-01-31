@@ -287,7 +287,8 @@ const streamFromDirection = (
     (flagFrom === Flags.gas || flagFrom === Flags.barrier)
   ) {
     return {
-      distribution: gasDistributions[oppositeDir] +
+      distribution:
+        gasDistributions[oppositeDir] +
         gasDistributions[dir] -
         lattice.distributions[dir][iTo],
       deltaMass: 0,
@@ -297,8 +298,7 @@ const streamFromDirection = (
 
   const distribution = lattice.distributions[oppositeDir][iFrom];
   const deltaMass =
-    lattice.distributions[oppositeDir][iFrom] -
-    lattice.distributions[dir][iTo];
+    lattice.distributions[oppositeDir][iFrom] - lattice.distributions[dir][iTo];
   // (fluid > fluid) | (interface > fluid) | (fluid > interface)
   if (
     (flagTo === Flags.fluid && flagFrom === Flags.fluid) ||
@@ -483,16 +483,22 @@ export const flagEvolution = (lattice: Lattice, beta = 0.001): void => {
     // look for isolated interface cells
     let isIsolatedInGas = true;
     let isIsolatedInFluid = true;
-    for (let dir of Object.values(Direction)) {
+    for (const dir of Object.values(Direction)) {
       if (dir === Direction.C) {
         continue;
       }
       const { x: dx, y: dy } = DirectionRecord[dir];
       const i2 = getIndex(lattice.x, x + dx, y + dy);
-      if (lattice.flag[i2] === Flags.fluid || lattice.flag[i2] === Flags.interface) {
+      if (
+        lattice.flag[i2] === Flags.fluid ||
+        lattice.flag[i2] === Flags.interface
+      ) {
         isIsolatedInGas = false;
       }
-      if (lattice.flag[i2] === Flags.gas || lattice.flag[i2] === Flags.interface) {
+      if (
+        lattice.flag[i2] === Flags.gas ||
+        lattice.flag[i2] === Flags.interface
+      ) {
         isIsolatedInFluid = false;
       }
     }

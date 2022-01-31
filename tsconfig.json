@@ -1,0 +1,17 @@
+{
+	"compilerOptions": {
+	  "strict": true,
+	  "allowSyntheticDefaultImports": true,
+	  "sourceMap": true,
+	  "noUnusedParameters": true,
+	  "strictNullChecks": true,
+	  "moduleResolution": "node",
+	  "noImplicitAny": true,
+	  "target": "es5",
+	  "jsx": "react",
+	  "rootDir": "src",
+	  "resolveJsonModule": true
+	},
+	"include": ["src/**/*"],
+	"exclude": ["node_modules"]
+  }

@@ -2,7 +2,7 @@ import { cloneDeep } from "lodash";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Lattice, run as runSimulation } from "../../domain/lattice";
 import { Runner } from "../../domain/Runner";
-import { getColorMap } from "./render/colorMap";
+import { getJetColorMap, getOceanColorMap } from "./render/colorMap";
 import {
   getContext,
   getImage,
@@ -43,7 +43,7 @@ export const CanvasLattice = ({
     const canvas = canvasRef.current;
     const context = getContext(canvas);
     const image = getImage(context, lattice.x, lattice.y);
-    const colorMap = getColorMap();
+    const colorMap = getOceanColorMap();
     const contrast = 1;
     const _renderer = runRendering(
       colorMap,

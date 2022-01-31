@@ -39,7 +39,7 @@ export const Bump = Template.bind({});
 Bump.args = {
   lattice: bump,
   gravity: 0,
-  plotType: PlotTypes.rho,
+  plotType: PlotTypes.ocean,
 };
 
 /**
@@ -55,7 +55,7 @@ export const Circulating = Template.bind({});
 Circulating.args = {
   lattice: circulating,
   gravity: 0,
-  plotType: PlotTypes.curl,
+  plotType: PlotTypes.ocean,
 };
 
 /**
@@ -82,7 +82,7 @@ Flow.args = {
   lattice: flow,
   gravity: 0,
   viscosity: 0.02,
-  plotType: PlotTypes.curl,
+  plotType: PlotTypes.ocean,
 };
 
 /**
@@ -114,7 +114,7 @@ HalfFlow.args = {
   lattice: halfFlow,
   gravity: 0.001,
   viscosity: 0.02,
-  plotType: PlotTypes.curl,
+  plotType: PlotTypes.ocean,
 };
 
 /**
@@ -146,7 +146,7 @@ export const Dam = Template.bind({});
 Dam.args = {
   lattice: dam,
   gravity: 0.001,
-  plotType: PlotTypes.mass,
+  plotType: PlotTypes.ocean,
 };
 
 /**
@@ -164,7 +164,7 @@ DamBreak.args = {
   lattice: damBreak,
   gravity: 0.001,
   viscosity: 0.01,
-  plotType: PlotTypes.mass,
+  plotType: PlotTypes.ocean,
 };
 
 /**
@@ -187,7 +187,7 @@ export const CommunicatingVessels = Template.bind({});
 CommunicatingVessels.args = {
   lattice: communicatingVessels,
   gravity: 0.001,
-  plotType: PlotTypes.mass,
+  plotType: PlotTypes.ocean,
   viscosity: 0.005,
 };
 
@@ -208,7 +208,7 @@ export const DamBreak2 = Template.bind({});
 DamBreak2.args = {
   lattice: damBreak2,
   gravity: 0.001,
-  plotType: PlotTypes.mass,
+  plotType: PlotTypes.ocean,
   viscosity: 0.005,
 };
 
@@ -226,7 +226,7 @@ export const DamOverflow = Template.bind({});
 DamOverflow.args = {
   lattice: damOverflow,
   gravity: 0.001,
-  plotType: PlotTypes.mass,
+  plotType: PlotTypes.ocean,
   viscosity: 0.005,
 };
 
@@ -255,7 +255,7 @@ export const Source = Template.bind({});
 Source.args = {
   lattice: source,
   gravity: 0.001,
-  plotType: PlotTypes.mass,
+  plotType: PlotTypes.ocean,
   viscosity: 0.005,
 };
 
@@ -293,7 +293,7 @@ Droplet.args = {
   lattice: droplet,
   gravity: 0.001,
   viscosity: 0.02,
-  plotType: PlotTypes.mass,
+  plotType: PlotTypes.ocean,
   width: 330,
   height: 600,
 };

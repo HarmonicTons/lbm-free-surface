@@ -3,17 +3,19 @@ export interface ColorMap {
   redList: number[];
   greenList: number[];
   blueList: number[];
+  alphaList: number[];
 }
 
-// Set up the array of colors for plotting (mimicks matplotlib "jet" colormap):
-// (Kludge: Index nColors+1 labels the color used for drawing barriers.)
-// there are actually nColors+2 colors
-export const getColorMap = (nColors = 400): ColorMap => {
+/**
+ * Matplotlib "jet" colormap
+ */
+export const getJetColorMap = (nColors = 400): ColorMap => {
   const colorMap = {
     nColors,
-    redList: new Array(nColors + 2),
-    greenList: new Array(nColors + 2),
-    blueList: new Array(nColors + 2),
+    redList: new Array(nColors + 3),
+    greenList: new Array(nColors + 3),
+    blueList: new Array(nColors + 3),
+    alphaList: new Array(nColors + 3),
   };
 
   for (let c = 0; c <= nColors; c++) {
@@ -42,23 +44,70 @@ export const getColorMap = (nColors = 400): ColorMap => {
     colorMap.redList[c] = r;
     colorMap.greenList[c] = g;
     colorMap.blueList[c] = b;
+    colorMap.alphaList[c] = 1;
   }
   // black barriers
   colorMap.redList[nColors + 1] = 0;
   colorMap.greenList[nColors + 1] = 0;
   colorMap.blueList[nColors + 1] = 0;
-  // red interfaces
-  colorMap.redList[nColors + 2] = 255;
-  colorMap.greenList[nColors + 2] = 0;
-  colorMap.blueList[nColors + 2] = 0;
+  colorMap.alphaList[nColors + 1] = 1;
   // white gas
-  colorMap.redList[nColors + 3] = 255;
-  colorMap.greenList[nColors + 3] = 255;
-  colorMap.blueList[nColors + 3] = 255;
+  colorMap.redList[nColors + 2] = 255;
+  colorMap.greenList[nColors + 2] = 255;
+  colorMap.blueList[nColors + 2] = 255;
+  colorMap.alphaList[nColors + 2] = 0;
   // purple sources
-  colorMap.redList[nColors + 4] = 255;
-  colorMap.greenList[nColors + 4] = 0;
-  colorMap.blueList[nColors + 4] = 255;
+  colorMap.redList[nColors + 3] = 255;
+  colorMap.greenList[nColors + 3] = 0;
+  colorMap.blueList[nColors + 3] = 255;
+  colorMap.alphaList[nColors + 3] = 1;
+
+  return colorMap;
+};
+
+/**
+ * Ocean color map
+ */
+export const getOceanColorMap = (nColors = 400): ColorMap => {
+  const colorMap = {
+    nColors,
+    redList: new Array(nColors + 3),
+    greenList: new Array(nColors + 3),
+    blueList: new Array(nColors + 3),
+    alphaList: new Array(nColors + 3),
+  };
+
+  for (let c = 0; c <= nColors; c++) {
+    let r, g, b;
+    if (c < nColors / 2) {
+      r = 40;
+      g = 90;
+      b = 150 + Math.round((255 - 150) * ((c * 2) / nColors));
+    } else {
+      r = 40 + Math.round((255 - 40) * (((c - nColors / 2) * 2) / nColors));
+      g = 90 + Math.round((255 - 90) * (((c - nColors / 2) * 2) / nColors));
+      b = 255;
+    }
+    colorMap.redList[c] = r;
+    colorMap.greenList[c] = g;
+    colorMap.blueList[c] = b;
+    colorMap.alphaList[c] = 1;
+  }
+  // black barriers
+  colorMap.redList[nColors + 1] = 0;
+  colorMap.greenList[nColors + 1] = 0;
+  colorMap.blueList[nColors + 1] = 0;
+  colorMap.alphaList[nColors + 1] = 1;
+  // white gas
+  colorMap.redList[nColors + 2] = 255;
+  colorMap.greenList[nColors + 2] = 255;
+  colorMap.blueList[nColors + 2] = 255;
+  colorMap.alphaList[nColors + 2] = 0;
+  // purple sources
+  colorMap.redList[nColors + 3] = 255;
+  colorMap.greenList[nColors + 3] = 0;
+  colorMap.blueList[nColors + 3] = 255;
+  colorMap.alphaList[nColors + 3] = 1;
 
   return colorMap;
 };

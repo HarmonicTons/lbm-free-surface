@@ -1,3 +1,4 @@
+import { clamp } from "lodash";
 import { Flags } from "../../../domain/cell";
 import { Lattice } from "../../../domain/lattice";
 import { Runner } from "../../../domain/Runner";
@@ -11,6 +12,7 @@ export enum PlotTypes {
   curl = "curl",
   mass = "mass",
   alpha = "alpha",
+  ocean = "ocean",
 }
 
 export const getContext = (
@@ -43,17 +45,21 @@ const colorSquare = (
   r: number,
   g: number,
   b: number,
+  a: number,
   ydim: number,
   image: ImageData,
+  r0 = 230,
+  g0 = 230,
+  b0 = 230,
 ) => {
   // put y=0 at the bottom
   const flippedy = ydim - y - 1;
   for (let py = flippedy; py < flippedy + 1; py++) {
     for (let px = x; px < x + 1; px++) {
       const index = (px + py * image.width) * 4;
-      image.data[index + 0] = r;
-      image.data[index + 1] = g;
-      image.data[index + 2] = b;
+      image.data[index + 0] = r * a + r0 * (1 - a);
+      image.data[index + 1] = g * a + g0 * (1 - a);
+      image.data[index + 2] = b * a + b0 * (1 - a);
     }
   }
 };
@@ -76,15 +82,13 @@ export function render(
   for (let y = 0; y < ydim; y++) {
     for (let x = 0; x < xdim; x++) {
       const flag = lattice.flag[x + y * xdim];
+      const alpha = clamp(lattice.alpha[x + y * xdim], 0, 1);
       if (flag === Flags.barrier) {
-        // kludge for barrier color which isn't really part of color map
         cIndex = nColors + 1;
       } else if (flag === Flags.gas) {
-        cIndex = nColors + 3;
+        cIndex = nColors + 2;
       } else if (flag === Flags.source) {
-        cIndex = nColors + 4;
-        //   } else if (flag === Flags.interface) {
-        //     cIndex = nColors + 2;
+        cIndex = nColors + 3;
       } else {
         if (plotType == PlotTypes.rho) {
           cIndex = Math.round(
@@ -106,12 +110,35 @@ export function render(
           cIndex = Math.round(nColors * (speed * 4 * contrast));
         } else if (plotType == PlotTypes.mass) {
           cIndex = Math.round(
-            nColors * ((0.5 - lattice.m[x + y * xdim]) * contrast),
+            nColors * ((lattice.m[x + y * xdim] - 1) * 6 * contrast + 0.5),
           );
         } else if (plotType == PlotTypes.alpha) {
           cIndex = Math.round(
             nColors * ((lattice.alpha[x + y * xdim] - 1) * 6 * contrast + 0.5),
           );
+        } else if (plotType == PlotTypes.ocean) {
+          if (lattice.flag[x + y * xdim] === Flags.fluid) {
+            cIndex = clamp(
+              Math.round(nColors * (1.1 - lattice.rho[x + y * xdim]) * 5),
+              0,
+              nColors / 2,
+            );
+          }
+          if (lattice.flag[x + y * xdim] === Flags.interface) {
+            cIndex = clamp(
+              Math.round(
+                nColors *
+                  (Math.sqrt(
+                    lattice.ux[x + y * xdim] ** 2 +
+                      lattice.uy[x + y * xdim] ** 2,
+                  ) *
+                    5 +
+                    0.5),
+              ),
+              nColors / 2,
+              nColors,
+            );
+          }
         } else {
           cIndex = Math.round(
             nColors * (lattice.curl[x + y * xdim] * 5 * contrast + 0.5),
@@ -126,6 +153,7 @@ export function render(
         colorMap.redList[cIndex],
         colorMap.greenList[cIndex],
         colorMap.blueList[cIndex],
+        colorMap.alphaList[cIndex] * alpha,
         ydim,
         image,
       );

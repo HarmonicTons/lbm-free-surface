@@ -53,11 +53,15 @@ const useStyles = createUseStyles({
       const a = -Math.sign(uy) * Math.acos(ux / getU(ux, uy));
       return `rotate(${a}rad)`;
     },
-    opacity: ({u}: CellStylesProps) => {
-      if (u < 0.01) { return 0 }
-      if (u < 0.05) { return 0.4 }
+    opacity: ({ u }: CellStylesProps) => {
+      if (u < 0.01) {
+        return 0;
+      }
+      if (u < 0.05) {
+        return 0.4;
+      }
       return 0.7;
-    }
+    },
   },
   "@keyframes anim": {
     "0%": {
@@ -183,9 +187,7 @@ export const Cell = ({
             <Arrow
               percentWidth={u / 0.1}
               color={
-                flag === Flags.source
-                  ? "rgb(0, 255, 0)"
-                  : "rgb(255, 0, 0)"
+                flag === Flags.source ? "rgb(0, 255, 0)" : "rgb(255, 0, 0)"
               }
             />
           </div>

@@ -176,22 +176,44 @@ export const getIndex = (xLattice: number, x: number, y: number): number =>
   x + y * xLattice;
 
 /**
+ * get the position (x, y) from the lattice index
+ */
+export const getPosition = (
+  xLattice: number,
+  i: number,
+): { x: number; y: number } => {
+  const y = Math.floor(i / xLattice);
+  const x = i - y * xLattice;
+  return { x, y };
+};
+
+type ForEachCellOfLatticeOptions = {
+  includeBorders?: boolean;
+  order?: { x: "asc" | "desc"; y: "asc" | "desc" };
+};
+
+/**
  * iterate on each cell of a lattice
  */
 export const forEachCellOfLattice = (
   lattice: Lattice,
   fn: (index: number, x: number, y: number, lattice: Lattice) => void,
-  includeBorders = false,
+  {
+    includeBorders = false,
+    order = { x: "asc", y: "asc" },
+  }: ForEachCellOfLatticeOptions = {},
 ): void => {
   const { x: xLattice, y: yLattice } = lattice;
   const xMin = includeBorders ? 0 : 1;
-  const xMax = includeBorders ? xLattice : xLattice - 1;
+  const xMax = includeBorders ? xLattice - 1 : xLattice - 2;
   const yMin = includeBorders ? 0 : 1;
-  const yMax = includeBorders ? yLattice : yLattice - 1;
-  for (let y = yMin; y < yMax; y++) {
-    for (let x = xMin; x < xMax; x++) {
-      const index = getIndex(xLattice, x, y);
-      fn(index, x, y, lattice);
+  const yMax = includeBorders ? yLattice - 1 : yLattice - 2;
+  for (let y = yMin; y <= yMax; y++) {
+    for (let x = xMin; x <= xMax; x++) {
+      const y1 = order.y === "asc" ? y : yMax - y + yMin;
+      const x1 = order.x === "asc" ? x : xMax - x + xMin;
+      const index = getIndex(xLattice, x1, y1);
+      fn(index, x1, y1, lattice);
     }
   }
 };

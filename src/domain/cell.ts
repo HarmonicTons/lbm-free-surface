@@ -45,7 +45,7 @@ export const calculateUx = (
   SE: number,
   rho: number,
 ): number => {
-  return (E + NE + SE - W - NW - SW) / rho;
+  return rho === 0 ? 0 : (E + NE + SE - W - NW - SW) / rho;
 };
 
 export const calculateUy = (
@@ -57,7 +57,7 @@ export const calculateUy = (
   SE: number,
   rho: number,
 ): number => {
-  return (N + NW + NE - S - SW - SE) / rho;
+  return rho === 0 ? 0 : (N + NW + NE - S - SW - SE) / rho;
 };
 
 export const getEquilibriumDistribution = (

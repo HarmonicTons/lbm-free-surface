@@ -7,6 +7,7 @@ import {
   getIndex,
   Lattice,
   makeLatticeAtEquilibrium,
+  setResistance,
 } from "../../domain/lattice";
 import {
   Direction,
@@ -32,14 +33,14 @@ const bump = makeLatticeAtEquilibrium(80, 32, 1, 0.1, 0);
 const barrierSize = 8;
 for (let y = bump.y / 2 - barrierSize; y <= bump.y / 2 + barrierSize; y++) {
   const x = 20;
-  bump.flag[x + y * bump.x] = Flags.barrier;
+  setResistance(bump, 1, x + y * bump.x);
 }
 
 export const Bump = Template.bind({});
 Bump.args = {
   lattice: bump,
   gravity: 0,
-  plotType: PlotTypes.ocean,
+  plotType: PlotTypes.rho,
 };
 
 /**
@@ -55,7 +56,7 @@ export const Circulating = Template.bind({});
 Circulating.args = {
   lattice: circulating,
   gravity: 0,
-  plotType: PlotTypes.ocean,
+  plotType: PlotTypes.rho,
 };
 
 /**
@@ -69,7 +70,7 @@ for (
   y++
 ) {
   const x = 20;
-  flow.flag[x + y * flow.x] = Flags.barrier;
+  setResistance(flow, 1, x + y * flow.x);
 }
 
 for (let y = 1; y < flow.y - 1; y++) {
@@ -82,11 +83,11 @@ Flow.args = {
   lattice: flow,
   gravity: 0,
   viscosity: 0.02,
-  plotType: PlotTypes.ocean,
+  plotType: PlotTypes.rho,
 };
 
 /**
- * FALF FLOW
+ * HALF FLOW
  */
 const halfFlow = makeLatticeAtEquilibrium(80, 32, 1, 0.1, 0);
 for (let x = 1; x < halfFlow.x - 1; x++) {
@@ -101,7 +102,7 @@ for (let x = 1; x < halfFlow.x - 1; x++) {
 
 for (let y = 8; y <= 16; y++) {
   const x = 20;
-  halfFlow.flag[x + y * halfFlow.x] = Flags.barrier;
+  setResistance(halfFlow, 1, x + y * halfFlow.x);
 }
 
 for (let y = 1; y < 16; y++) {
@@ -114,7 +115,7 @@ HalfFlow.args = {
   lattice: halfFlow,
   gravity: 0.001,
   viscosity: 0.02,
-  plotType: PlotTypes.ocean,
+  plotType: PlotTypes.rho,
 };
 
 /**
@@ -255,7 +256,7 @@ export const Source = Template.bind({});
 Source.args = {
   lattice: source,
   gravity: 0.001,
-  plotType: PlotTypes.ocean,
+  plotType: PlotTypes.curl,
   viscosity: 0.005,
 };
 

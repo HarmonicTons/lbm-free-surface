@@ -77,6 +77,7 @@ export type Lattice = {
   m: Array<number>;
   alpha: Array<number>;
   curl: Array<number>;
+  resistance: Array<number>;
   totalMass: number;
   maxRho: number;
   minRho: number;
@@ -120,6 +121,7 @@ export const makeLatticeStructure = (x: number, y: number): Lattice => ({
   m: [...Array(x * y)].fill(0),
   alpha: [...Array(x * y)].fill(1),
   curl: [...Array(x * y)].fill(0),
+  resistance: [...Array(x * y)].fill(0),
   totalMass: 0,
   maxRho: 0,
   minRho: 0,
@@ -167,6 +169,28 @@ export const makeLatticeAtEquilibrium = (
     lattice.flag[i] = Flags.fluid;
   });
   return lattice;
+};
+
+export const setResistance = (
+  lattice: Lattice,
+  res: number,
+  i: number,
+): void => {
+  lattice.resistance[i] = res;
+  lattice.rho[i] *= 1 - res;
+  lattice.ux[i] *= 1 - res;
+  lattice.uy[i] *= 1 - res;
+  lattice.distributions.C[i] *= 1 - res;
+  lattice.distributions.E[i] *= 1 - res;
+  lattice.distributions.W[i] *= 1 - res;
+  lattice.distributions.N[i] *= 1 - res;
+  lattice.distributions.S[i] *= 1 - res;
+  lattice.distributions.NE[i] *= 1 - res;
+  lattice.distributions.NW[i] *= 1 - res;
+  lattice.distributions.SW[i] *= 1 - res;
+  lattice.distributions.SE[i] *= 1 - res;
+  lattice.alpha[i] = 1;
+  lattice.m[i] *= 1 - res;
 };
 
 /**
@@ -292,6 +316,8 @@ const streamFromDirection = (
   const iFrom = getIndex(lattice.x, x + dx, y + dy);
   const iTo = getIndex(lattice.x, x, y);
   const flagTo = lattice.flag[iTo];
+  const rFrom = lattice.resistance[iFrom];
+  const rTo = lattice.resistance[iTo];
   // consider sources as fluid
   const flagFrom =
     lattice.flag[iFrom] === Flags.source ? Flags.fluid : lattice.flag[iFrom];
@@ -318,9 +344,10 @@ const streamFromDirection = (
     };
   }
 
-  const distribution = lattice.distributions[oppositeDir][iFrom];
-  const deltaMass =
-    lattice.distributions[oppositeDir][iFrom] - lattice.distributions[dir][iTo];
+  const dFrom = lattice.distributions[oppositeDir][iFrom];
+  const dTo = lattice.distributions[dir][iTo];
+  const distribution = rFrom * dTo + (1 - rTo) * dFrom;
+  const deltaMass = (1 - rTo) * dFrom - (1 - rFrom) * dTo;
   // (fluid > fluid) | (interface > fluid) | (fluid > interface)
   if (
     (flagTo === Flags.fluid && flagFrom === Flags.fluid) ||
@@ -381,7 +408,7 @@ export const stream = (lattice: Lattice): void => {
       lattice.nextDistributions.SE[i],
     );
     lattice.rho[i] = rho;
-    lattice.alpha[i] = lattice.m[i] / rho;
+    lattice.alpha[i] = rho === 0 ? 1 : lattice.m[i] / rho;
     lattice.ux[i] = calculateUx(
       lattice.nextDistributions.NW[i],
       lattice.nextDistributions.NE[i],
@@ -463,7 +490,8 @@ export const flagEvolution = (lattice: Lattice, beta = 0.001): void => {
         const mPerCell = excessMass / neighboorInterfaceCellCount;
         neighboorInterfaceCells.forEach(i => {
           lattice.m[i] += mPerCell;
-          lattice.alpha[i] = lattice.m[i] / lattice.rho[i];
+          lattice.alpha[i] =
+            lattice.rho[i] === 0 ? 1 : lattice.m[i] / lattice.rho[i];
         });
       }
       return;
@@ -496,7 +524,8 @@ export const flagEvolution = (lattice: Lattice, beta = 0.001): void => {
         const mPerCell = massDebt / neighboorInterfaceCellCount;
         neighboorInterfaceCells.forEach(i => {
           lattice.m[i] += mPerCell;
-          lattice.alpha[i] = lattice.m[i] / lattice.rho[i];
+          lattice.alpha[i] =
+            lattice.rho[i] === 0 ? 1 : lattice.m[i] / lattice.rho[i];
         });
       }
       return;

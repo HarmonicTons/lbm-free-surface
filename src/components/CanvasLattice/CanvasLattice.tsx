@@ -43,7 +43,7 @@ export const CanvasLattice = ({
     const canvas = canvasRef.current;
     const context = getContext(canvas);
     const image = getImage(context, lattice.x, lattice.y);
-    const colorMap = getOceanColorMap();
+    const colorMap = getJetColorMap();
     const contrast = 1;
     const _renderer = runRendering(
       colorMap,

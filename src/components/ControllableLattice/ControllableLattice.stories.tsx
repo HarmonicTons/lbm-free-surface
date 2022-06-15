@@ -3,7 +3,7 @@ import React from "react";
 import { ComponentStory, ComponentMeta } from "@storybook/react";
 
 import { ControllableLattice } from "./ControllableLattice";
-import { makeLatticeAtEquilibrium } from "../../domain/lattice";
+import { makeLatticeAtEquilibrium, setResistance } from "../../domain/lattice";
 import { Flags } from "../../domain/cell";
 
 export default {
@@ -62,6 +62,15 @@ lattice4.flag[15] = Flags.barrier;
 export const Lattice4 = Template.bind({});
 Lattice4.args = {
   lattice: lattice4,
+  gravity: 0.002,
+};
+
+const lattice5 = makeLatticeAtEquilibrium(6, 5, 1, 0.1, 0);
+setResistance(lattice5, 1, 15);
+
+export const Lattice5 = Template.bind({});
+Lattice5.args = {
+  lattice: lattice5,
   gravity: 0.002,
 };
 
